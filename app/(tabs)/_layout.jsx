@@ -21,11 +21,12 @@ const _layout = () => {
         {/* <Tabs.Screen name='profile'/> */}
         <Tabs.Screen name='assign'
   options={{
-    title: 'Assign',
+    title: 'Tasks',
     headerShown: false,
     tabBarIcon: ({ color }) => <Ionicons name="clipboard" size={24} color={color} />,
   }}
 />
+
     </Tabs>
   )
 }
