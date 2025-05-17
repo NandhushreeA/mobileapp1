@@ -104,3 +104,12 @@ export function getEmpLeave(leave_type , emp_id, year) {
   }
  // import { publicAxiosRequest } from './HttpMethod';
 
+import axios from 'axios';
+
+export const customerSignUp = async (customerId, pin) => {
+  const response = await axios.post('http://<YOUR_BACKEND_IP>:<PORT>/api/signup', {
+    customerId,
+    pin
+  });
+  return response.data;
+};

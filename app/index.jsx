@@ -1,72 +1,79 @@
-import React, { useEffect, useState } from 'react';
-import { Text, View, ActivityIndicator, Image } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Redirect, useRouter } from 'expo-router';
-import Logo from '../assets/images/Atom_walk_logo.jpg'
+import React from 'react';
+import { Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
+import Logo from '../assets/images/Atom_walk_logo.jpg';
 
-export default function Index() {
-  const [loading, setLoading] = useState(true);
+export default function Welcome() {
   const router = useRouter();
-  const userToken = AsyncStorage.getItem('userToken');
-// if(userToken){
-//   return(
-//     <Redirect href={"/home"}></Redirect>
-//   )
-// }
-  useEffect(() => {
-    const checkUserToken = async () => {
-      try {
-        // Check for token in AsyncStorage
-        const userToken = await AsyncStorage.getItem('userToken');
-        const storedMPIN = await AsyncStorage.getItem('userPin');
-        if(storedMPIN){
-          router.replace('/PinScreen');
-        } 
-        else if (userToken) {
-          // If token exists, navigate to HomeScreen
-          router.replace('/home');
-        } else {
-          // Else, navigate to AuthScreen
-          router.replace('/AuthScreen');
-        }
-      } catch (error) {
-        console.error('Error fetching userToken from AsyncStorage', error);
-      } finally {
-        setLoading(false); // Stop loading after check
-      }
-    };
-
-    checkUserToken();
-  }, []);
-
-  if (loading) {
-    // Show loader with an image while loading
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Image
-          source={Logo} // Replace with actual loader image path
-          style={{ width: 100, height: 100 }}
-        />
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <Text>Redirecting...</Text>
+    <View style={styles.container}>
+      <View style={styles.logoContainer}>
+        <Image 
+          source={Logo} 
+          style={styles.logo}
+          resizeMode="contain"
+        />
+      </View>
+      <Text style={styles.title}>Welcome to Atomwalk Solar management system </Text>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={() => router.push('/AuthScreen')}
+        >
+          <Text style={styles.buttonText}>Sign In</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.button, styles.signupButton]} 
+          onPress={() => router.push('/AuthScreen/signup')}
+        >
+          <Text style={styles.buttonText}>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  logoContainer: {
+    marginBottom: 40,
+    alignItems: 'center',
+  },
+  logo: {
+    width: 200,
+    height: 100,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'Regular',
+    marginBottom: 40,
+    color: '#333',
+    textAlign:'center'
+  },
+  buttonContainer: {
+    width: '100%',
+    gap: 15,
+  },
+  button: {
+    backgroundColor: '#007AFF',
+    padding: 15,
+    borderRadius: 10,
+    width: '100%',
+    alignItems: 'center',
+  },
+  signupButton: {
+    backgroundColor: '#34C759',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+});

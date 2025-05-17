@@ -1,56 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
-const initialTasks = [
-  {
-    id: '1',
-    taskName: 'Install Solar Panel',
-    assignedTo: 'Rahul Sharma',
-    status: 'In Progress',
-    employeeContact: '9876543210',
-    customerName: 'Ajay Kumar',
-    customerId: 'CUST123456',
-  },
-  {
-    id: '2',
-    taskName: 'System Inspection',
-    assignedTo: 'Priya Mehta',
-    status: 'Completed',
-    employeeContact: '9123456789',
-    customerName: 'Sunita Reddy',
-    customerId: 'CUST987654',
-  },
-  {
-    id: '2',
-    taskName: 'System Inspection',
-    assignedTo: 'Priya Mehta',
-    status: 'Completed',
-    employeeContact: '9123456789',
-    customerName: 'Sunita Reddy',
-    customerId: 'CUST987654',
-  },
-  {
-    id: '2',
-    taskName: 'System Inspection',
-    assignedTo: 'Priya Mehta',
-    status: 'Completed',
-    employeeContact: '9123456789',
-    customerName: 'Sunita Reddy',
-    customerId: 'CUST987654',
-  },
-  {
-    id: '2',
-    taskName: 'System Inspection',
-    assignedTo: 'Priya Mehta',
-    status: 'Completed',
-    employeeContact: '9123456789',
-    customerName: 'Sunita Reddy',
-    customerId: 'CUST987654',
-  },
-  
-  
-];
 
 const TaskCard = ({ task, onStatusChange }) => (
   <View style={styles.card}>
@@ -85,19 +35,73 @@ const getStatusColor = (status) => {
 };
 
 const TaskAssignmentScreen = () => {
-  const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleStatusChange = (taskId) => {
-    setTasks(tasks.map(task => {
-      if (task.id === taskId) {
-        return {
-          ...task,
-          status: task.status === 'In Progress' ? 'Completed' : 'In Progress'
-        };
-      }
-      return task;
-    }));
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const fetchTasks = async () => {
+    try {
+      // Replace this URL with your actual API endpoint
+      const response = await fetch('YOUR_API_ENDPOINT/tasks');
+      const data = await response.json();
+      setTasks(data);
+      setLoading(false);
+    } catch (err) {
+      setError('Failed to fetch tasks');
+      setLoading(false);
+      console.error('Error fetching tasks:', err);
+    }
   };
+
+  const handleStatusChange = async (taskId) => {
+    try {
+      // Replace with your API endpoint
+      const response = await fetch(`YOUR_API_ENDPOINT/tasks/${taskId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: tasks.find(task => task.id === taskId).status === 'In Progress' ? 'Completed' : 'In Progress'
+        }),
+      });
+
+      if (response.ok) {
+        setTasks(tasks.map(task => {
+          if (task.id === taskId) {
+            return {
+              ...task,
+              status: task.status === 'In Progress' ? 'Completed' : 'In Progress'
+            };
+          }
+          return task;
+        }));
+      }
+    } catch (err) {
+      console.error('Error updating task status:', err);
+      // You might want to show an error message to the user here
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.centerContent]}>
+        <ActivityIndicator size="large" color="#131a00" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.container, styles.centerContent]}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -175,6 +179,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     fontWeight: 'bold',
+  },
+  centerContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: '#dc3545',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
 

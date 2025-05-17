@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, ImageBackground, StyleSheet } from 'react-native';
+import { View, Text, ImageBackground, Button, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const home = () => {
+const Home = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground
@@ -11,9 +11,30 @@ const home = () => {
         resizeMode="cover"
       >
         <View style={styles.overlay}>
-          <Text style={styles.title}>Welcome to Atom walk</Text>
+          <Text style={styles.title}>Welcome to Atom Walk</Text>
           <Text style={styles.title}>Solar Management System</Text>
-          <Text style={styles.subtitle}>Precision Scheduling, Transparent Team Allocation.</Text>
+          <Text style={styles.subtitle}>
+            Precision Scheduling, Transparent Team Allocation.
+          </Text>
+
+          {/* Wrapping buttons in a separate view for spacing */}
+          <View style={styles.buttonContainer}>
+            <View style={styles.buttonWrapper}>
+              <Button
+                title="Sign In"
+                onPress={() => navigation.navigate('SignIn')}
+                color="#d896ff"
+              />
+            </View>
+
+            <View style={styles.buttonWrapper}>
+              <Button
+                title="Sign Up"
+                onPress={() => navigation.navigate('SignUp')}
+                color="#841584"
+              />
+            </View>
+          </View>
         </View>
       </ImageBackground>
     </SafeAreaView>
@@ -34,21 +55,29 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: 32,
-    //fontWeight: '',
+    fontSize: 28,
     color: '#fff',
     textAlign: 'center',
-    marginBottom: 10,
-    margin:2,
+    marginBottom: 5,
   },
   subtitle: {
-    fontSize: 24,
+    fontSize: 18,
     color: '#fff',
     textAlign: 'center',
+    marginBottom: 30,
     fontWeight: '200',
+  },
+  buttonContainer: {
+    width: '60%',
+    marginTop:200,
+  },
+  buttonWrapper: {
+    marginVertical: 10, 
+    marginBottom:10,// vertical spacing between buttons
   },
 });
 
-export default home;
+export default Home;
